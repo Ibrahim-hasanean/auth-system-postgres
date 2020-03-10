@@ -31,3 +31,8 @@
     post request : https://karaz-1.herokuapp.com/newpassword
     recieve in body : email , code , password
     return {status:200,message: "password reset success"}
+
+  - private route endpoint
+    get request : https://karaz-1.herokuapp.com/users/private
+    recieve in header : x-access-token: token
+    return

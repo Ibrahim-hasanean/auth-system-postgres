@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
           .json({ status: 400, message: "token validation failed" });
       const result = await query.getUserById(decode.userId);
       const user = result.rows[0];
-      if (!user.verified)
+      if (!user.is_verified)
         return res
           .status(400)
           .json({ status: 400, message: "user email is not verified" });
