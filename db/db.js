@@ -11,14 +11,14 @@ const pool = new Pool({
 });
 
 module.exports = {
-  createUser: (email, password, name) => {
+  createUser: (email, password, name, city) => {
     let signup_date = moment().format("DD-MM-YYYY");
     let signup_time = moment().format("LTS");
     password = bcrypt.hashSync(password, 10);
     return pool
       .query(
-        "INSERT INTO users (name,email ,password,is_verified,signup_date,signup_time) VALUES ($1,$2,$3,$4,$5,$6)",
-        [name, email, password, false, signup_date, signup_time]
+        "INSERT INTO users (name,email ,password,is_verified,signup_date,signup_time ,location) VALUES ($1,$2,$3,$4,$5,$6,$7)",
+        [name, email, password, false, signup_date, signup_time, city]
       )
       .then(result => {
         return result;

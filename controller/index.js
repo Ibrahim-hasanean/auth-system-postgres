@@ -5,13 +5,13 @@ const sendmail = require("../middleware/sendmail");
 const confirmCode = require("../middleware/confirmCode.js");
 module.exports = {
   signup: async (req, res, next) => {
-    let { email, name, password } = req.body;
+    let { email, name, password, city } = req.body;
     let emailExist = await query.getUser(email);
     if (emailExist.rows.length > 0)
       return res
         .status(400)
         .json({ status: 409, message: "email is already singed up" });
-    let newUser = await query.createUser(email, password, name);
+    let newUser = await query.createUser(email, password, name, city);
     let sendCode = await sendmail(email, "email verification");
     console.log(newUser.rows);
     res
@@ -92,7 +92,7 @@ module.exports = {
         return res.status(200).json({ status: 200, message: "code is true" });
       })
       .catch(err => {
-        res.status(400).json({ status: 400, message: "somthing wrong ):" });
+        res.status(400).json({ status: 400, message: err });
       });
   },
   forgetPassword: async (req, res, next) => {
@@ -113,7 +113,7 @@ module.exports = {
           .json({ status: 200, message: "email is verified" });
       })
       .catch(err => {
-        res.status(400).json({ status: 400, message: "somthing wrong ):" });
+        res.status(400).json({ status: 400, message: err });
       });
   },
   newPassword: async (req, res, next) => {

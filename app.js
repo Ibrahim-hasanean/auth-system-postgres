@@ -7,8 +7,8 @@ var usersRouter = require("./routes/users");
 const validator = require("./middleware/validator");
 var events = require("events");
 const query = require("./db/db");
-var app = express();
 const port = process.env.PORT || 3000;
+var app = express();
 require("dotenv").config();
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
