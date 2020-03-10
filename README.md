@@ -35,4 +35,4 @@
   - private route endpoint
     get request : https://karaz-1.herokuapp.com/users/private
     recieve in header : x-access-token: token
-    return
+    return : herllo from private route mr name
