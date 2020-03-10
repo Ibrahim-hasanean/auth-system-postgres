@@ -35,7 +35,7 @@ app.use(function(err, req, res, next) {
   res.send(err.message);
 });
 
-app.listen(3000, () => {
+app.listen(port, () => {
   console.log("listen on 3000");
 });
 module.exports = app;
