@@ -7,9 +7,11 @@ var usersRouter = require("./routes/users");
 const validator = require("./middleware/validator");
 var events = require("events");
 const query = require("./db/db");
+const cors = require("cors");
 const port = process.env.PORT || 3000;
 var app = express();
 require("dotenv").config();
+app.use(cors());
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
