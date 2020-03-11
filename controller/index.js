@@ -16,7 +16,7 @@ module.exports = {
     console.log(newUser.rows);
     res
       .status(200)
-      .json({ status: 200, message: "sign up success and code is sent " });
+      .json({ status: 200, message: "sign up success and code is sent" });
   },
   login: async (req, res, next) => {
     let { email, password } = req.body;
@@ -100,7 +100,7 @@ module.exports = {
     const result = await query.getUser(email);
     const user = result.rows[0];
     if (!user) return next({ status: 400, message: "user not found" });
-    let sendCode = await sendmail(email, "forget password ");
+    let sendCode = await sendmail(email, "forget password");
     res.status(200).json({ status: 200, message: "code is sent" });
   },
   verify: async (req, res, next) => {
