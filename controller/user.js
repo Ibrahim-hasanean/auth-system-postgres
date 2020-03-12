@@ -12,7 +12,7 @@ module.exports = {
     ];
     let updatedUser = await query.updateUser(...data, user.id);
     // console.log(updatedUser);
-    res.send("user updated");
+    res.status(200).json({ status: 200, message: "account edite success" });
   },
   updatePassword: async (req, res, next) => {
     let user = req.user;

@@ -39,7 +39,19 @@
     recieve in body : email , code , password
     return {status:200,message: "password reset success"}
 
-  - private route endpoint
+  - private route endpoint for token test
     get request : https://karaz-1.herokuapp.com/users/private
     recieve in header : x-access-token: token
     return : herllo from private route mr name
+
+* setting endpoints
+
+  - edite user account
+    patch request : https://karaz-1.herokuapp.com/users/editeaccount
+    recieve in header : x-access-token: token , body: first_name:value , last_name:value,email:value , phone:value , bithday:date
+    return :{ status: 200, message: "account edite success" }
+
+  - new password from account
+    patch request : https://karaz-1.herokuapp.com/users/newpassword
+    recieve in header : x-access-token: token , body: password:curruent password , newPassword : new passsword
+    return {"status": 200,"message": "password is reset"}
