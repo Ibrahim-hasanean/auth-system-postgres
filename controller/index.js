@@ -31,7 +31,7 @@ module.exports = {
         .json({ status: 400, message: "password is wrong" });
 
     let token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1h"
+      expiresIn: "12h"
     });
     console.log(user.id);
     return res.status(200).json({
