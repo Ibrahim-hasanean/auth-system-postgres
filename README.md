@@ -10,7 +10,14 @@
   - login endpoint :
     post request : https://karaz-1.herokuapp.com/login
     recieve in body : email , password
-    return {status:200,message: "login success", token:"token value" }
+    return {status:200,message: "login success", token:"token value" ,
+    user:{
+    firstName: user.first_name,
+    lastName: user.last_name,
+    email: user.email,
+    phoneNumber: user.phone,
+    birthday: user.birthday}
+    }
 
   - verify endpoint :
     post request : https://karaz-1.herokuapp.com/verify

@@ -5,15 +5,14 @@ const sendmail = require("../middleware/sendmail");
 const confirmCode = require("../middleware/confirmCode.js");
 module.exports = {
   signup: async (req, res, next) => {
-    let { email, name, password, city } = req.body;
+    let { email, password, city } = req.body;
     let emailExist = await query.getUser(email);
     if (emailExist.rows.length > 0)
       return res
         .status(400)
         .json({ status: 409, message: "email is already singed up" });
-    let newUser = await query.createUser(email, password, name, city);
+    let newUser = await query.createUser(email, password, city);
     let sendCode = await sendmail(email, "email verification");
-    console.log(newUser.rows);
     res
       .status(200)
       .json({ status: 200, message: "sign up success and code is sent" });
@@ -35,9 +34,19 @@ module.exports = {
       expiresIn: "1h"
     });
     console.log(user.id);
-    return res
-      .status(200)
-      .json({ status: 200, message: "login success", token });
+    return res.status(200).json({
+      status: 200,
+      message: "login success",
+      token,
+      user: {
+        firstName: user.first_name,
+        lastName: user.last_name,
+        email: user.email,
+        phoneNumber: user.phone,
+        birthday: user.birthday,
+        location: user.location
+      }
+    });
   },
   facebookLogin: async (req, res, next) => {
     let { userData } = req.body;

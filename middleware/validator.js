@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const query = require("../db/db");
 module.exports = (req, res, next) => {
-  console.log(req.headers["x-access-token"]);
   jwt.verify(
     req.headers["x-access-token"],
     process.env.JWT_SECRET,

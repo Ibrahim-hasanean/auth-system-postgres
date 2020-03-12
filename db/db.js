@@ -11,14 +11,15 @@ const pool = new Pool({
 });
 
 module.exports = {
-  createUser: (email, password, name, city) => {
-    let signup_date = moment().format("DD-MM-YYYY");
+  createUser: (email, password, city) => {
+    let signup_date = moment().format("MM-DD-YYYY");
+    console.log(signup_date);
     let signup_time = moment().format("LTS");
     password = bcrypt.hashSync(password, 10);
     return pool
       .query(
-        "INSERT INTO users (name,email ,password,is_verified,signup_date,signup_time ,location) VALUES ($1,$2,$3,$4,$5,$6,$7)",
-        [name, email, password, false, signup_date, signup_time, city]
+        "INSERT INTO users (email ,password,is_verified,signup_date,signup_time ,location) VALUES ($1,$2,$3,$4,$5,$6)",
+        [email, password, false, signup_date, signup_time, city]
       )
       .then(result => {
         return result;
@@ -127,6 +128,21 @@ module.exports = {
         newPassword,
         email
       ])
+      .then(result => {
+        return result;
+      })
+      .catch(err => {
+        throw new Error(err.message);
+      });
+  },
+  updateUser: async (firstName, secondName, email, phone, birthday, id) => {
+    birthday = moment(birthday, "DD-MM-YYYY").format("MM-DD-YYYY");
+    console.log(birthday);
+    pool
+      .query(
+        "UPDATE users SET first_name =$1 , last_name=$2,email=$3  ,phone = $4 , date_of_birth = $5  WHERE id = $6",
+        [firstName, secondName, email, phone, birthday, id]
+      )
       .then(result => {
         return result;
       })
