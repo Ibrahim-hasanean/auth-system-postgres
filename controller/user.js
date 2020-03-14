@@ -31,5 +31,20 @@ module.exports = {
 
     let createNewPassword = await query.newPassword(user.email, newPassword);
     return res.status(200).json({ status: 200, message: "password is reset" });
+  },
+  addAddress: async (req, res, next) => {
+    try {
+      let user = req.user;
+      let data = [
+        req.body.city,
+        req.body.block,
+        req.body.street,
+        req.body.details
+      ];
+      let addAddress = await query.addAddress(user.id, ...data);
+      res.status(200).json({ status: 200, message: "address is added" });
+    } catch (e) {
+      res.status(400).json({ status: 400, message: e.message });
+    }
   }
 };

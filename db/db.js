@@ -149,5 +149,18 @@ module.exports = {
       .catch(err => {
         throw new Error(err.message);
       });
+  },
+  addAddress: (id, city, blook, street, details) => {
+    pool
+      .query(
+        "INSERT INTO address (id,city,block,street,details) VALUES ($1,$2,$3,$4,$5)",
+        [id, city, blook, street, details]
+      )
+      .then(result => {
+        return result;
+      })
+      .catch(err => {
+        throw new Error(err.message);
+      });
   }
 };

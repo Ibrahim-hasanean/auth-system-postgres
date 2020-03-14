@@ -8,6 +8,7 @@ const validator = require("./middleware/validator");
 var events = require("events");
 const query = require("./db/db");
 const cors = require("cors");
+const dashboard = require("./routes/dashboard");
 const port = process.env.PORT || 3000;
 var app = express();
 require("dotenv").config();
@@ -29,6 +30,7 @@ app.get("/allusers", async (req, res, next) => {
   let users = result.rows;
   res.json(users);
 });
+app.use("/dashboard", dashboard);
 // error handler
 app.use(function(err, req, res, next) {
   console.log(err);
