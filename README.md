@@ -25,7 +25,7 @@
 
     - post request : https://karaz-1.herokuapp.com/verify
     - recieve in body : email , code
-    - return {status:200,message: "login success", token:"token value" }
+    - return { status: 200, message: "email is verified" }
 
   - forget password endpoint :
 

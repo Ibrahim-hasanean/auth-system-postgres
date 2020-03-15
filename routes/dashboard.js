@@ -15,9 +15,9 @@ router.get("/", async (req, res, next) => {
   const result = await google.analytics("v3").data.ga.get({
     auth: jwt,
     ids: "ga:" + view_id,
-    "start-date": "today",
+    "start-date": "7daysAgo",
     "end-date": "today",
-    metrics: "ga:sessions"
+    metrics: "ga:sessions,ga:users,ga:pageviews"
   });
   console.dir(result.data);
   res.send("get google analytics result");
