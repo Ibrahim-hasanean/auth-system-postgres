@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sendmail = require("../middleware/sendmail");
 const confirmCode = require("../middleware/confirmCode.js");
+
 module.exports = {
   signup: async (req, res, next) => {
     let { email, password, city } = req.body;
@@ -29,7 +30,10 @@ module.exports = {
       return res
         .status(400)
         .json({ status: 400, message: "password is wrong" });
-
+    if (!user.is_verified)
+      return res
+        .status(400)
+        .json({ status: 400, message: "user email is not verified" });
     let token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
       expiresIn: "12h"
     });
@@ -43,8 +47,8 @@ module.exports = {
         lastName: user.last_name,
         email: user.email,
         phoneNumber: user.phone,
-        birthday: user.birthday,
-        location: user.location
+        birthday: user.date_of_birth,
+        city: user.location
       }
     });
   },

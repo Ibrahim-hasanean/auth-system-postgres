@@ -18,7 +18,9 @@
       lastName: user.last_name,
       email: user.email,
       phoneNumber: user.phone,
-      birthday: user.birthday}
+      birthday: user.birthday
+      city: user.location
+      }
       }
 
   - verify endpoint :
