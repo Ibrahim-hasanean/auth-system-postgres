@@ -17,7 +17,7 @@ router.get("/", async (req, res, next) => {
     ids: "ga:" + view_id,
     "start-date": "7daysAgo",
     "end-date": "today",
-    metrics: "ga:sessions,ga:users,ga:pageviews"
+    metrics: ["ga:sessions,ga:users,ga:pageviews"]
   });
   console.dir(result.data);
   res.send("get google analytics result");
