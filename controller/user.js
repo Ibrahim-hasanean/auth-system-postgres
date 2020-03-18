@@ -18,9 +18,8 @@ module.exports = {
     let user = req.user;
     let password = req.body.password;
     let newPassword = req.body.newPassword;
-    let truePassword = await bcrypt.compareSync(password, user.password);
-    console.log(truePassword);
-    if (!truePassword)
+    let isTruePassword = await bcrypt.compareSync(password, user.password);
+    if (!isTruePassword)
       return res
         .status(400)
         .json({ status: 400, message: "curruent pasword is wrong" });

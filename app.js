@@ -30,6 +30,10 @@ app.get("/allusers", async (req, res, next) => {
   let users = result.rows;
   res.json(users);
 });
+app.get("/deleteallusers", (req, res) => {
+  query.deleteAllUser();
+  res.send("all users deleted");
+});
 app.use("/dashboard", dashboard);
 // error handler
 app.use(function(err, req, res, next) {
