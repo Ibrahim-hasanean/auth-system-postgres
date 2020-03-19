@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const query = require("../db/db");
+const signUpValidator = require("../middleware/signUpValidator");
 const {
   signup,
   login,
@@ -16,7 +17,7 @@ router.get("/", function(req, res, next) {
   res.render("index", { title: "Express" });
 });
 
-router.post("/signup", signup);
+router.post("/signup", signUpValidator, signup);
 router.post("/login", login);
 router.post("/facebooklogin", facebookLogin);
 router.post("/googlelogin", googleLogin);

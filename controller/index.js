@@ -8,12 +8,6 @@ module.exports = {
   signup: async (req, res, next) => {
     let { phone, email, password, city } = req.body;
     if (email) {
-      let emailExist = await query.getUser(email);
-
-      if (emailExist)
-        return res
-          .status(400)
-          .json({ status: 409, message: "user is already singed up" });
       let newUser = await query.createUser(email, password, city);
       console.log(newUser);
       let sendCodeToEmail = await sendmail(newUser, "email verification");
@@ -23,11 +17,6 @@ module.exports = {
       });
     }
     if (phone) {
-      let phoneExist = await query.getUserByPhone(phone);
-      if (phoneExist)
-        return res
-          .status(400)
-          .json({ status: 409, message: "user is already singed up" });
       let newUser = await query.createUserWithPhone(phone, password, city);
       console.log(newUser);
       let sendCodeTOPhone = await sendSMS(newUser);
