@@ -29,18 +29,21 @@
   - post request : https://karaz-1.herokuapp.com/verify
   - recieve in body : email , code
   - return { status: 200, message: "email is verified" }
+  - errors { status: 400, message: 'code is wrong' }
 
 * forget password endpoint :
 
   - post request : https://karaz-1.herokuapp.com/forgetpassword
   - recieve in body : email
   - return {status:200,message: "code is sent"}
+  - errors : { status: 400, message: "user not found" }
 
 * confirm code endpoint
 
   - post request : https://karaz-1.herokuapp.com/confirmcode
   - recieve in body : email , code
   - return {status:200,message: "code is true"}
+  - errors: { status: 400, message: 'code is wrong' }
 
 * new password endpoint
 
@@ -61,8 +64,10 @@
     - patch request : https://karaz-1.herokuapp.com/users/editeaccount
     - recieve in header : x-access-token: token , body: first_name:value , last_name:value,email:value , phone:value , bithday:date
     - return :{ status: 200, message: "account edite success" }
+    - errors
 
   - new password from account
     - patch request : https://karaz-1.herokuapp.com/users/newpassword
     - recieve in header : x-access-token: token , body: password:curruent password , newPassword : new passsword
     - return {"status": 200,"message": "password is reset"}
+    - errors { status: 400, message: "curruent pasword is wrong" },{ status: 400, message: "password must be atleast 8 character" }

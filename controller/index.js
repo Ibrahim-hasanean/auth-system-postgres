@@ -128,7 +128,8 @@ module.exports = {
       user = await query.getUserByPhone(phone);
       let sendCode = await sendSMS(user);
     }
-    if (!user) return next({ status: 400, message: "user not found" });
+    if (!user)
+      return res.status(400).json({ status: 400, message: "user not found" });
     res.status(200).json({ status: 200, message: "code is sent" });
   },
   verify: async (req, res, next) => {
