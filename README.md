@@ -64,7 +64,7 @@
     - patch request : https://karaz-1.herokuapp.com/users/editeaccount
     - recieve in header : x-access-token: token , body: first_name:value , last_name:value,email:value , phone:value , bithday:date
     - return :{ status: 200, message: "account edite success" }
-    - errors
+    - errors : { status: 400, message: "email is not valid" } , { status: 400, message: "phone is not valid" }
 
   - new password from account
     - patch request : https://karaz-1.herokuapp.com/users/newpassword

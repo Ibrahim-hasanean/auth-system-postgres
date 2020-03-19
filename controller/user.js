@@ -1,5 +1,6 @@
 const query = require("../db/db");
 const bcrypt = require("bcrypt");
+const validator = require("validator");
 module.exports = {
   editeAccount: async (req, res, next) => {
     let user = req.user;
@@ -10,6 +11,16 @@ module.exports = {
       req.body.phone,
       req.body.bithday
     ];
+    if (!validator.isEmail(data.email)) {
+      return res
+        .status(400)
+        .json({ status: 400, message: "email is not valid" });
+    }
+    if (!validator.isNumeric(phone)) {
+      return res
+        .status(400)
+        .json({ status: 400, message: "phone is not valid" });
+    }
     let updatedUser = await query.updateUser(...data, user.id);
     // console.log(updatedUser);
     res.status(200).json({ status: 200, message: "account edite success" });
