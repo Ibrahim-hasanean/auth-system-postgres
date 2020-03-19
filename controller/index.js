@@ -35,12 +35,11 @@ module.exports = {
       user = await query.getUserByPhone(phone);
     }
     if (!user) return next({ status: 400, message: "user not found" });
-    console.log(user);
     let truePassword = await bcrypt.compareSync(password, user.password);
     if (!truePassword)
       return res
-        .status(400)
-        .json({ status: 400, message: "password is wrong" });
+        .status(401)
+        .json({ status: 401, message: "password is wrong" });
     if (!user.is_verified)
       return res
         .status(400)

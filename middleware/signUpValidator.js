@@ -15,7 +15,7 @@ module.exports = async (req, res, next) => {
     if (!validator.isNumeric(phone)) {
       return res
         .status(400)
-        .json({ status: 400, message: "email is not valid" });
+        .json({ status: 400, message: "phone is not valid" });
     }
     user = await query.getUserByPhone(phone);
   }
