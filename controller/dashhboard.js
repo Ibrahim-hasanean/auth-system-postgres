@@ -24,7 +24,8 @@ const dashboard = async (req, res, next) => {
     allUsersCount: usersCount,
     socialMediaUsers: socialMediaUsers.length,
     newUsers: newUsers.length,
-    monthPageViews: result.data.totalsForAllResults
+    monthPageViews: result.data.totalsForAllResults,
+    trafficSource: result.data.rows
   });
 };
 

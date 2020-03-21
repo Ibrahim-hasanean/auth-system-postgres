@@ -17,7 +17,8 @@ module.exports = async (startDate, endDate = todayDate) => {
     "start-date": startDate,
     dimensions: "ga:source",
     "end-date": endDate,
-    metrics: ["ga:sessions,ga:users,ga:pageviews"]
+    metrics: "ga:pageviews"
   });
+  //["ga:sessions,ga:users,ga:pageviews"]
   return result;
 };
