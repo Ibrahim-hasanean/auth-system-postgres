@@ -5,6 +5,11 @@ module.exports = {
   editeAccount: async (req, res, next) => {
     let user = req.user;
     let { firstName, lastName, email, phone, bithday } = req.body;
+    if (!email && !phone) {
+      return res
+        .status(400)
+        .json({ status: 400, message: "email or phone must be added" });
+    }
     if (!validator.isEmail(String(email))) {
       return res
         .status(400)
