@@ -28,7 +28,7 @@
 
   - post request : https://karaz-1.herokuapp.com/verify
   - recieve in body : email , code
-  - return { status: 200, message: "email is verified" }
+  - return { status: 200, message: "your account is verified" }
   - errors { status: 400, message: 'code is wrong' }
 
 * forget password endpoint :

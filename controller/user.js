@@ -4,14 +4,10 @@ const validator = require("validator");
 module.exports = {
   editeAccount: async (req, res, next) => {
     let user = req.user;
-    let data = [
-      req.body.firstName,
-      req.body.lastName,
-      req.body.email,
-      req.body.phone,
-      req.body.bithday
-    ];
-    if (!validator.isEmail(data.email)) {
+    console.log(req.body.email);
+    let { firstName, lastName, email, phone, bithday } = req.body;
+
+    if (!validator.isEmail(email)) {
       return res
         .status(400)
         .json({ status: 400, message: "email is not valid" });
@@ -21,7 +17,14 @@ module.exports = {
         .status(400)
         .json({ status: 400, message: "phone is not valid" });
     }
-    let updatedUser = await query.updateUser(...data, user.id);
+    let updatedUser = await query.updateUser(
+      firstName,
+      lastName,
+      email,
+      phone,
+      bithday,
+      user.id
+    );
     // console.log(updatedUser);
     res.status(200).json({ status: 200, message: "account edite success" });
   },
@@ -39,7 +42,7 @@ module.exports = {
         .status(400)
         .json({ status: 400, message: "password must be atleast 8 character" });
 
-    let createNewPassword = await query.newPassword(user.email, newPassword);
+    let createNewPassword = await query.newPassword(user.id, newPassword);
     return res.status(200).json({ status: 200, message: "password is reset" });
   },
   addAddress: async (req, res, next) => {

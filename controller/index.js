@@ -119,17 +119,19 @@ module.exports = {
   },
   forgetPassword: async (req, res, next) => {
     let { email, phone } = req.body;
+    console.log(phone);
     let user;
     if (email) {
       user = await query.getUser(email);
+      if (!user)
+        return res.status(400).json({ status: 400, message: "user not found" });
       let sendCode = await sendmail(user, "forget password");
-    }
-    if (phone) {
+    } else if (phone) {
       user = await query.getUserByPhone(phone);
+      if (!user)
+        return res.status(400).json({ status: 400, message: "user not found" });
       let sendCode = await sendSMS(user);
     }
-    if (!user)
-      return res.status(400).json({ status: 400, message: "user not found" });
     res.status(200).json({ status: 200, message: "code is sent" });
   },
   verify: async (req, res, next) => {
@@ -139,7 +141,7 @@ module.exports = {
         let verify = await query.trueVerified(user.id);
         return res
           .status(200)
-          .json({ status: 200, message: "email is verified" });
+          .json({ status: 200, message: "your account is verified" });
       })
       .catch(err => {
         res.status(400).json({ status: 400, message: err });
