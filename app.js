@@ -11,6 +11,7 @@ const cors = require("cors");
 const dashboard = require("./routes/dashboard");
 const port = process.env.PORT || 3000;
 var app = express();
+require("./db/sequalize");
 require("dotenv").config();
 app.use(cors());
 // view engine setup

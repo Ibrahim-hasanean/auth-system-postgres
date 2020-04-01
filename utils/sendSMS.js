@@ -14,9 +14,7 @@ module.exports = async user => {
   to = `97${user.phone}`;
   nexmo.message.sendSms(from, to, text, async (err, data) => {
     if (err) throw new Error("somthing wrong");
-    console.log(user);
     let setCode = await query.addCode(user.id, code);
-    console.log(data);
     return "message is sent";
   });
 };

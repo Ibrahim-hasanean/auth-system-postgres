@@ -4,36 +4,47 @@ const jwt = require("jsonwebtoken");
 const sendmail = require("../middleware/sendmail");
 const confirmCode = require("../middleware/confirmCode.js");
 const sendSMS = require("../utils/sendSMS.js");
+const Op = require("sequelize").Op;
+const User = require("../db/User");
+const moment = require("moment");
 module.exports = {
   signup: async (req, res, next) => {
     let { phone, email, password, city } = req.body;
+    console.log(phone, email, password, city);
+    password = bcrypt.hashSync(password, 10);
+    let newUser;
+    let signup_date = moment().format("MM-DD-YYYY");
+    let signup_time = moment().format("LTS");
     if (email) {
-      let newUser = await query.createUser(email, password, city);
-      console.log(newUser);
-      let sendCodeToEmail = await sendmail(newUser, "email verification");
-      res.status(200).json({
-        status: 200,
-        message: "sign up success and code is sent to your email"
+      newUser = await User.create({
+        email,
+        password,
+        city,
+        signup_date,
+        signup_time
       });
-    }
-    if (phone) {
-      let newUser = await query.createUserWithPhone(phone, password, city);
-      console.log(newUser);
-      let sendCodeTOPhone = await sendSMS(newUser);
-      res.status(200).json({
-        status: 200,
-        message: "sign up success and code is sent to your phone"
+      sendmail(newUser, "verification code");
+    } else if (phone) {
+      newUser = await User.create({
+        phone,
+        password,
+        city,
+        signup_date,
+        signup_time
       });
+      sendSMS(newUser);
     }
+    res
+      .status(200)
+      .json({ status: 200, message: "sign up success and code is sent" });
   },
   login: async (req, res, next) => {
     let { phone, email, password } = req.body;
-    let user;
-    if (email) {
-      user = await query.getUser(email);
-    } else if (phone) {
-      user = await query.getUserByPhone(phone);
-    }
+    let user = await User.findOne({
+      where: {
+        [Op.or]: [{ email: String(email) }, { phone: String(phone) }]
+      }
+    });
     if (!user) return next({ status: 400, message: "user not found" });
     let truePassword = await bcrypt.compareSync(password, user.password);
     if (!truePassword)
@@ -63,11 +74,8 @@ module.exports = {
   },
   facebookLogin: async (req, res, next) => {
     let { userData } = req.body;
-    console.log(userData);
     let { email, name, id } = userData;
-    let result = await query.getUser(email);
-    console.log(result);
-    let userExist = result.rows[0];
+    let userExist = await User.findOne({ where: { fb_id: id } });
     if (!userExist) {
       let newUser = await query.createFcUser(email, name, id);
       let token = jwt.sign({ userID: newUser.id }, "my jwt secret key", {
@@ -87,8 +95,7 @@ module.exports = {
   googleLogin: async (req, res, next) => {
     let { userData } = req.body;
     let { email, name, id } = userData;
-    let result = await query.getUser(email);
-    let userExist = result.rows[0];
+    let userExist = await User.findOne({ where: { google_id: id } });
     if (!userExist) {
       let newUser = await query.createGoogleUser(email, name, id);
       let token = jwt.sign({ userID: newUser.id }, "my jwt secret key", {
@@ -108,60 +115,77 @@ module.exports = {
   },
   confirmCode: async (req, res, next) => {
     let { email, phone, code } = req.body;
-    confirmCode(email, phone, code)
-      .then(async user => {
-        let verify = await query.trueVerified(user.id);
-        return res.status(200).json({ status: 200, message: "code is true" });
-      })
-      .catch(err => {
-        res.status(400).json({ status: 400, message: err });
-      });
-  },
-  forgetPassword: async (req, res, next) => {
-    let { email, phone } = req.body;
-    console.log(phone);
-    let user;
-    if (email) {
-      user = await query.getUser(email);
-      if (!user)
-        return res.status(400).json({ status: 400, message: "user not found" });
-      let sendCode = await sendmail(user, "forget password");
-    } else if (phone) {
-      user = await query.getUserByPhone(phone);
-      if (!user)
-        return res.status(400).json({ status: 400, message: "user not found" });
-      let sendCode = await sendSMS(user);
-    }
-    res.status(200).json({ status: 200, message: "code is sent" });
-  },
-  verify: async (req, res, next) => {
-    let { phone, email, code } = req.body;
-    confirmCode(email, phone, code)
-      .then(async user => {
-        let verify = await query.trueVerified(user.id);
-        return res
-          .status(200)
-          .json({ status: 200, message: "your account is verified" });
-      })
-      .catch(err => {
-        res.status(400).json({ status: 400, message: err });
-      });
-  },
-  newPassword: async (req, res, next) => {
-    let { email, phone, code, password } = req.body;
-    let user;
-    if (email) {
-      user = await query.getUser(email);
-    }
-    if (phone) {
-      user = await query.getUserByPhone(phone);
-    }
-    console.log(user);
+    let user = await User.findOne({
+      where: {
+        [Op.or]: [{ email: String(email) }, { phone: String(phone) }]
+      }
+    });
     if (!user)
       return res.status(400).json({ status: 400, message: "user not found" });
     if (code !== user.verification_code)
       return res.status(400).json({ status: 400, message: "code is wrong" });
-    let newUser = await query.newPassword(user.id, password);
+    if (code == user.verification_code) {
+      let updateUser = await User.update(
+        { is_verified: true },
+        { where: { id: user.id } }
+      );
+      console.log(updateUser);
+      res.status(200).json({ status: 200, message: "code is true" });
+    }
+  },
+  forgetPassword: async (req, res, next) => {
+    let { email, phone } = req.body;
+    let user = await User.findOne({
+      where: {
+        [Op.or]: [{ email: String(email) }, { phone: String(phone) }]
+      }
+    });
+    if (email) {
+      sendmail(user, "your code");
+    }
+    if (phone) {
+      sendSMS(user);
+    }
+
+    res.status(200).json({ status: 200, message: "code is sent" });
+  },
+  verify: async (req, res, next) => {
+    let { phone, email, code } = req.body;
+    let user = await User.findOne({
+      where: {
+        [Op.or]: [{ email: String(email) }, { phone: String(phone) }]
+      }
+    });
+    if (!user)
+      return res.status(400).json({ status: 400, message: "user not found" });
+    if (code !== user.verification_code)
+      return res.status(400).json({ status: 400, message: "code is wrong" });
+    if (code == user.verification_code) {
+      let updateUser = await User.update(
+        { is_verified: true },
+        { where: { id: user.id } }
+      );
+      res
+        .status(200)
+        .json({ status: 200, message: "your account is verified" });
+    }
+  },
+  newPassword: async (req, res, next) => {
+    let { email, phone, code, password } = req.body;
+    let user = await User.findOne({
+      where: {
+        [Op.or]: [{ email: String(email) }, { phone: String(phone) }]
+      }
+    });
+    if (!user)
+      return res.status(400).json({ status: 400, message: "user not found" });
+    // if (code !== user.verification_code)
+    //   return res.status(400).json({ status: 400, message: "code is wrong" });
+    let newPassword = bcrypt.hashSync(password, 12);
+    let newUser = await User.update(
+      { password: newPassword },
+      { where: { id: user.id } }
+    );
     return res
       .status(200)
       .json({ status: 200, message: "password reset success" });

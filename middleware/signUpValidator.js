@@ -1,29 +1,24 @@
 const validator = require("validator");
 const query = require("../db/db");
+const Op = require("sequelize").Op;
+const User = require("../db/User");
 module.exports = async (req, res, next) => {
   let { email, phone, password } = req.body;
-  let user;
-  if (email) {
-    if (!validator.isEmail(email)) {
-      return res
-        .status(400)
-        .json({ status: 400, message: "email is not valid" });
+  let user = await User.findOne({
+    where: {
+      [Op.or]: [{ email: String(email) }, { phone: String(phone) }]
     }
-    user = await query.getUser(email);
+  });
+  if (user)
+    return res
+      .status(409)
+      .json({ status: 409, message: "user is already signed up" });
+
+  if (email && !validator.isEmail(email)) {
+    return res.status(400).json({ status: 400, message: "email is not valid" });
   }
-  if (phone) {
-    if (!validator.isNumeric(phone)) {
-      return res
-        .status(400)
-        .json({ status: 400, message: "phone is not valid" });
-    }
-    user = await query.getUserByPhone(phone);
-  }
-  if (user) {
-    return res.status(409).json({
-      status: 409,
-      message: "user is already signed up"
-    });
+  if (phone && !validator.isNumeric(phone)) {
+    return res.status(400).json({ status: 400, message: "phone is not valid" });
   }
   if (!password) {
     return res

@@ -1,29 +1,25 @@
 const query = require("../db/db");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
+const User = require("../db/User");
 module.exports = {
   editeAccount: async (req, res, next) => {
     let user = req.user;
-    let { firstName, lastName, email, phone, bithday } = req.body;
-    if (!email && !phone) {
-      return res
-        .status(400)
-        .json({ status: 400, message: "email or phone must be added" });
-    }
-    if (!validator.isEmail(String(email))) {
+    let { firstName, lastName, email, phone, birthday } = req.body;
+    let date_of_birth = birthday;
+    let data = [firstName, lastName, email, phone, date_of_birth];
+    data = data.filter(d => d != undefined);
+    console.log(data);
+    if (email && !validator.isEmail(String(email))) {
       return res
         .status(400)
         .json({ status: 400, message: "email is not valid" });
     }
-    let updatedUser = await query.updateUser(
-      firstName,
-      lastName,
-      email,
-      phone,
-      bithday,
-      user.id
+    let updatedUser = await User.update(
+      { ...data },
+      { where: { id: user.id } }
     );
-    // console.log(updatedUser);
+
     res.status(200).json({ status: 200, message: "account edite success" });
   },
   updatePassword: async (req, res, next) => {
@@ -40,7 +36,11 @@ module.exports = {
         .status(400)
         .json({ status: 400, message: "password must be atleast 8 character" });
 
-    let createNewPassword = await query.newPassword(user.id, newPassword);
+    newPassword = bcrypt.hashSync(password, 12);
+    let createNewPassword = await User.update(
+      { password: newPassword },
+      { where: { id: user.id } }
+    );
     return res.status(200).json({ status: 200, message: "password is reset" });
   },
   addAddress: async (req, res, next) => {
