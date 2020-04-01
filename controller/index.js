@@ -79,7 +79,15 @@ module.exports = {
       where: { [Op.or]: [{ fb_id: String(id) }, { email: email }] }
     });
     if (!userExist) {
-      let newUser = await query.createFcUser(email, name, id);
+      let signup_date = moment().format("MM-DD-YYYY");
+      let signup_time = moment().format("LTS");
+      let newUser = await User.create({
+        email,
+        first_name: name,
+        fb_id: id,
+        signup_date,
+        signup_time
+      });
       let token = jwt.sign({ userID: newUser.id }, "my jwt secret key", {
         expiresIn: "1h"
       });
