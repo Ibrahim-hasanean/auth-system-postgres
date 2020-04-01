@@ -2,6 +2,7 @@ const query = require("../db/db");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 const User = require("../db/User");
+const Address = require("../db/address");
 module.exports = {
   editeAccount: async (req, res, next) => {
     let user = req.user;
@@ -36,7 +37,7 @@ module.exports = {
         .status(400)
         .json({ status: 400, message: "password must be atleast 8 character" });
 
-    newPassword = bcrypt.hashSync(password, 12);
+    newPassword = bcrypt.hashSync(newPassword, 12);
     let createNewPassword = await User.update(
       { password: newPassword },
       { where: { id: user.id } }
@@ -52,9 +53,10 @@ module.exports = {
         req.body.street,
         req.body.details
       ];
-      let addAddress = await query.addAddress(user.id, ...data);
+      let addAddress = await Address.create({ ...data });
       res.status(200).json({ status: 200, message: "address is added" });
     } catch (e) {
+      console.log(e);
       res.status(400).json({ status: 400, message: e.message });
     }
   }

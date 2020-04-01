@@ -75,7 +75,9 @@ module.exports = {
   facebookLogin: async (req, res, next) => {
     let { userData } = req.body;
     let { email, name, id } = userData;
-    let userExist = await User.findOne({ where: { fb_id: id } });
+    let userExist = await User.findOne({
+      where: { [Op.or]: [{ fb_id: String(id) }, { email: email }] }
+    });
     if (!userExist) {
       let newUser = await query.createFcUser(email, name, id);
       let token = jwt.sign({ userID: newUser.id }, "my jwt secret key", {
@@ -95,9 +97,20 @@ module.exports = {
   googleLogin: async (req, res, next) => {
     let { userData } = req.body;
     let { email, name, id } = userData;
-    let userExist = await User.findOne({ where: { google_id: id } });
+    let userExist = await User.findOne({
+      where: { [Op.or]: [{ google_id: String(id) }, { email: email }] }
+    });
     if (!userExist) {
-      let newUser = await query.createGoogleUser(email, name, id);
+      let signup_date = moment().format("MM-DD-YYYY");
+      let signup_time = moment().format("LTS");
+      let newUser = await User.create({
+        email,
+        first_name: name,
+        google_id: id,
+        signup_date,
+        signup_time
+      });
+      console.log(newUser);
       let token = jwt.sign({ userID: newUser.id }, "my jwt secret key", {
         expiresIn: "1h"
       });
