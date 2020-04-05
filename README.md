@@ -71,3 +71,8 @@
     - recieve in header : x-access-token: token , body: password:curruent password , newPassword : new passsword
     - return {"status": 200,"message": "password is reset"}
     - errors { status: 400, message: "curruent pasword is wrong" },{ status: 400, message: "password must be atleast 8 character" }
+
+- add address :
+  post request : https://karaz-1.herokuapp.com/users/addaddress
+  recieve : header : x-access-token: token , body: city , block,streeet , details
+  return : { status: 200, message: "address is added" }

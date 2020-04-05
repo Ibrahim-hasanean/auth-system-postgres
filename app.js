@@ -9,6 +9,7 @@ var events = require("events");
 const query = require("./db/db");
 const cors = require("cors");
 const dashboard = require("./routes/dashboard");
+require("./db/relations");
 const port = process.env.PORT || 3000;
 var app = express();
 require("./db/sequalize");

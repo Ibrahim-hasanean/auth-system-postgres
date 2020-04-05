@@ -3,24 +3,31 @@ const bcrypt = require("bcrypt");
 const validator = require("validator");
 const User = require("../db/User");
 const Address = require("../db/address");
+const user_address = require("../db/user_address");
 module.exports = {
   editeAccount: async (req, res, next) => {
     let user = req.user;
-    let { firstName, lastName, email, phone, birthday } = req.body;
-    let date_of_birth = birthday;
-    let data = [firstName, lastName, email, phone, date_of_birth];
-    data = data.filter(d => d != undefined);
-    console.log(data);
+    let first_name = req.body.firstName || null,
+      last_name = req.body.lastName || null,
+      phone = req.body.phone || null,
+      email = req.body.email || null,
+      date_of_birth = req.body.birthday || null;
     if (email && !validator.isEmail(String(email))) {
       return res
         .status(400)
         .json({ status: 400, message: "email is not valid" });
     }
     let updatedUser = await User.update(
-      { ...data },
+      {
+        first_name,
+        last_name,
+        email,
+        phone,
+        date_of_birth,
+      },
       { where: { id: user.id } }
     );
-
+    console.log(updatedUser);
     res.status(200).json({ status: 200, message: "account edite success" });
   },
   updatePassword: async (req, res, next) => {
@@ -45,19 +52,12 @@ module.exports = {
     return res.status(200).json({ status: 200, message: "password is reset" });
   },
   addAddress: async (req, res, next) => {
-    try {
-      let user = req.user;
-      let data = [
-        req.body.city,
-        req.body.block,
-        req.body.street,
-        req.body.details
-      ];
-      let addAddress = await Address.create({ ...data });
-      res.status(200).json({ status: 200, message: "address is added" });
-    } catch (e) {
-      console.log(e);
-      res.status(400).json({ status: 400, message: e.message });
-    }
-  }
+    const user = req.user;
+    let { city, block, street, details } = req.body;
+    let addAddress = await Address.create({ city, block, street, details });
+    let newAddress = await user.addAddress(addAddress);
+    const userAddress = await user.getAddresses();
+    console.log(JSON.stringify(newAddress, null, 4));
+    res.status(200).json({ status: 200, message: "address is added" });
+  },
 };

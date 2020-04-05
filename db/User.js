@@ -1,5 +1,7 @@
 const Sequelize = require("sequelize");
 const sequelize = require("./sequalize");
+const Address = require("./address");
+const user_address = require("./user_address");
 const User = sequelize.define(
   "users",
   {
@@ -51,7 +53,12 @@ const User = sequelize.define(
       type: Sequelize.DATE
     }
   },
-  { timestamps: false }
+  { timestamps: false, freezeTableName: true }
 );
-
+// User.belongsToMany(Address, {
+//   through: "user_address",
+//   foreignKey: "user_id",
+//   sourceKey: "id",
+//   targetKey: "id"
+// });
 module.exports = User;
