@@ -10,18 +10,17 @@ module.exports = {
     let first_name = req.body.firstName || null,
       last_name = req.body.lastName || null,
       phone = req.body.phone || null,
-      email = req.body.email || null,
+      // email = req.body.email || null,
       date_of_birth = req.body.birthday || null;
-    if (email && !validator.isEmail(String(email))) {
-      return res
-        .status(400)
-        .json({ status: 400, message: "email is not valid" });
-    }
+    // if (email && !validator.isEmail(String(email))) {
+    //   return res
+    //     .status(400)
+    //     .json({ status: 400, message: "email is not valid" });
+    // }
     let updatedUser = await User.update(
       {
         first_name,
         last_name,
-        email,
         phone,
         date_of_birth,
       },
