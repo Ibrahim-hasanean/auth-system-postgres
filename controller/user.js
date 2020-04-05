@@ -7,16 +7,22 @@ const user_address = require("../db/user_address");
 module.exports = {
   editeAccount: async (req, res, next) => {
     let user = req.user;
-    let first_name = req.body.firstName || null,
-      last_name = req.body.lastName || null,
-      phone = req.body.phone || null,
-      // email = req.body.email || null,
-      date_of_birth = req.body.birthday || null;
-    // if (email && !validator.isEmail(String(email))) {
-    //   return res
-    //     .status(400)
-    //     .json({ status: 400, message: "email is not valid" });
-    // }
+    let first_name = req.body.firstName || user.first_name,
+      last_name = req.body.lastName || user.last_name,
+      phone = req.body.phone || user.phone,
+      email = req.body.email || user.email,
+      date_of_birth = req.body.birthday || user.date_of_birth;
+
+    if (email && !validator.isEmail(String(email))) {
+      return res
+        .status(400)
+        .json({ status: 400, message: "email is not valid" });
+    }
+    if (phone && phone.length != 10) {
+      return res
+        .status(400)
+        .json({ status: 400, message: "phone is not valid" });
+    }
     let updatedUser = await User.update(
       {
         first_name,
